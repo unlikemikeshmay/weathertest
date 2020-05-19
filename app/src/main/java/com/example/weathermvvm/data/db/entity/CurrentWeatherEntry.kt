@@ -3,6 +3,8 @@ package com.example.weathermvvm.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import java.util.function.DoubleBinaryOperator
 
@@ -25,10 +27,9 @@ data class CurrentWeatherEntry(
     @SerializedName("weather_code")
     val weatherCode: Int,
     @SerializedName("weather_descriptions")
-    val weatherDescriptions: List<String>,
+    var weatherDescriptions: MutableList<String>,
     @SerializedName("weather_icons")
-    val weatherIcons: List<String>,
-
+    var weatherIcons: MutableList<String>,
     @SerializedName("wind_dir")
     val windDir: String,
     @SerializedName("wind_speed")
@@ -36,4 +37,18 @@ data class CurrentWeatherEntry(
 ){
     @PrimaryKey(autoGenerate = false)
     var id: Int = CURRENT_WEATHER_ID
+}
+class Converter{
+    companion object{
+        @TypeConverter
+        @JvmStatic
+        fun listToString(weatherDescriptions: MutableList<String>):String{
+            return weatherDescriptions.joinToString(",")
+        }
+        @TypeConverter
+        @JvmStatic
+        fun stringToList(str:String):MutableList<String>{
+            return str.split(",").toMutableList()
+        }
+    }
 }
